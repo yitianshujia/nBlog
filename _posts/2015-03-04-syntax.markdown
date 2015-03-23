@@ -2,7 +2,7 @@
 layout:     post
 title:      "new year"
 subtitle:   "new year,new try,never stop"
-date:       2015-02-24 12:00:00
+date:       2015-03-04 12:00:00
 author:     "yitian"
 header-img: ""
 ---
@@ -44,14 +44,76 @@ header-img: ""
 
 **Code**
 
-{% highlight c %}
+{% highlight c# %}
 
-static void asyncEnabled(Dict* args, void* vAdmin, String* txid, struct Allocator* requestAlloc)
-{
-    struct Admin* admin = Identity_check((struct Admin*) vAdmin);
-    int64_t enabled = admin->asyncEnabled;
-    Dict d = Dict_CONST(String_CONST("asyncEnabled"), Int_OBJ(enabled), NULL);
-    Admin_sendMessage(&d, txid, admin);
+public class CarWalk : MonoBehaviour {
+
+	public Transform leftPoint;
+	public Transform rightPoint;
+	bool isFront, isBack, isLeft, isRight;
+	float moveSpeed = 30f;
+	float rotateSpeed = 150f;
+	// Use this for initialization
+	void Start () {
+		
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		setDir();
+		checkKey();
+	}
+	
+	void setDir(){
+		isFront 	= Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow);
+		isBack 	= Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
+		isLeft 	= Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow);
+		isRight 	= Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow);
+	}
+	
+	void checkKey(){
+		if(Input.GetKey(KeyCode.Space)){
+			transform.Translate(transform.InverseTransformDirection(transform.forward) * 3 * moveSpeed * Time.deltaTime);
+		}
+		if( isLeft || isRight ) {
+			if( isLeft ) {
+				if( isFront ) {
+					transform.RotateAround(leftPoint.position, -Vector3.up, rotateSpeed * Time.deltaTime);
+				} else if ( isBack ) {
+					transform.RotateAround(leftPoint.position, Vector3.up, rotateSpeed * Time.deltaTime);
+				} else {
+					
+				}
+			} else {
+				if ( isFront ) {
+					transform.RotateAround(rightPoint.position, Vector3.up, rotateSpeed * Time.deltaTime);
+				} else if ( isBack ) {
+					transform.RotateAround(rightPoint.position, -Vector3.up, rotateSpeed * Time.deltaTime);
+				}
+				else
+				{
+					
+				}
+			}
+		} else if ( isFront || isBack ) {
+			if ( isFront ) {
+				if ( isLeft ) {
+					transform.RotateAround(leftPoint.position, -Vector3.up, rotateSpeed * Time.deltaTime);
+				} else if ( isRight ) {
+					transform.RotateAround(rightPoint.position, Vector3.up, rotateSpeed * Time.deltaTime);
+				} else {
+					transform.Translate(transform.InverseTransformDirection(transform.forward) * moveSpeed * Time.deltaTime);
+				}
+			} else {
+				if( isLeft ) {
+					transform.RotateAround(leftPoint.position, Vector3.up, rotateSpeed * Time.deltaTime);
+				} else if( isRight ) {
+					transform.RotateAround(rightPoint.position, -Vector3.up, rotateSpeed * Time.deltaTime);
+				} else {
+					transform.Translate(transform.InverseTransformDirection(-transform.forward) * moveSpeed * Time.deltaTime);
+				}
+			}
+		}
+	}
 }
-
 {% endhighlight %}
